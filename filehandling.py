@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 class FileHandle:
@@ -11,7 +12,7 @@ class FileHandle:
         print("Entry Added Successfully!")    
 
     def view_all_entry(self):
-        try:
+        if os.path.exists("journal.txt"):
             with open("journal.txt", "r") as file:
                 content = file.read()
                 print("Your Journal Entry")
@@ -20,40 +21,41 @@ class FileHandle:
                     print("No entries yet. Start by adding a new journal entry!")
                 else:
                     print(content)
-        except FileNotFoundError:
+        else:
             print("No Journal Entry Found. Start by adding a new entry.")
 
     def search_entries(self):
-        keyword = input("Enter keyword or date to search: ").lower()
-        try:
-            with open("journal.txt", "r") as file:
-                content = file.read()
-                entries = content.split("\n\n")
-
-                found = False
-                print("\nMatching Entries:\n")
-                print("*" * 30)
-                for entry in entries:
-                    if keyword in entry.lower():
-                        print(entry)
-                        found = True
-
-                if not found:
-                    print("No matching entries found.\n")
-
-        except FileNotFoundError:
+        if not os.path.exists("journal.txt"):
             print("No journal file found to search.\n")
+            return
+
+        keyword = input("Enter keyword or date to search: ").lower()
+        with open("journal.txt", "r") as file:
+            content = file.read()
+            entries = content.split("\n\n")
+
+            found = False
+            print("\nMatching Entries:\n")
+            print("*" * 30)
+            for entry in entries:
+                if keyword in entry.lower():
+                    print(entry)
+                    found = True
+
+            if not found:
+                print("No matching entries found.\n")
 
     def delete_all_entry(self):
-        try:
-            userinput = input("Are you sure you want to delete all entries? (yes/no): ").strip().lower()
-            if userinput == "yes":
-                open("journal.txt", "w").close()
-                print("All journal entries have been deleted")
-            else:
-                print("Deletion cancelled")
-        except FileNotFoundError:
-            print("No journal entry to delete")
+        if not os.path.exists("journal.txt"):
+            print("No journal entry to delete.")
+            return
+
+        userinput = input("Are you sure you want to delete all entries? (yes/no): ").strip().lower()
+        if userinput == "yes":
+            open("journal.txt", "w").close()
+            print("All journal entries have been deleted.")
+        else:
+            print("Deletion cancelled.")
 
 
 # Create an instance of FileHandle
